@@ -21,6 +21,7 @@ public class CardGame {
         CardGame that=new CardGame();
 
         //创建扑克牌(52张，不要大小王)
+        System.out.println("========游戏开始，创建扑克牌=========");
         that.CreateCards();
         System.out.println("========扑克牌创建成功！=========");
         Card c0;
@@ -32,9 +33,7 @@ public class CardGame {
 
         }
         System.out.print("\n");
-        //比较
-        that.CompareCards(that.cards.get(0),that.cards.get(1));
-        System.out.println("比较结果：" + that.CompareCards(that.cards.get(0), that.cards.get(1)));
+
         System.out.println("\n============开始洗牌===========");
         //洗牌
         that.WashCards(that.cards);
