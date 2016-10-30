@@ -1,5 +1,6 @@
 /**
  *此游戏是简易扑克牌游戏
+ * 规则，比各自手牌上最大牌
  * 锻炼数据结构和排序的运用能力
  *
  */
@@ -11,7 +12,7 @@ import java.util.ArrayList;
  */
 public class CardGame {
     public static int PLAYER_NUM=3;
-    public static int CARD_NUM=6;//玩家手牌数
+    public static int CARD_NUM=3;//玩家手牌数
     public ArrayList<Card> cards=new ArrayList<Card>();
     public HashMap<String,Card> hm=new HashMap<String, Card>();
 
@@ -50,6 +51,8 @@ public class CardGame {
         // CreatePlayers();
         //发牌(规则：一人一张，顺序发牌)
         that.SendCards(that.pl);
+
+
         //比较得出获胜玩家
         that.GameResult(that.pl);
     }
@@ -357,6 +360,7 @@ class Card implements Comparable<Card>{
     }
 }
 class Player{
+    private int weight;
     private int ID;
 
     public int getID() {
