@@ -2,8 +2,9 @@
  *此游戏是简易扑克牌游戏
  * 规则，比各自手牌上最大牌
  * 锻炼数据结构和排序的运用能力
- *
+ * 可判断顺子和同花
  */
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.Collections;
 import java.util.ArrayList;
@@ -11,12 +12,13 @@ import java.util.ArrayList;
  * Created by ghost on 2016/10/26.
  */
 public class CardGame {
-    public static int PLAYER_NUM=3;
-    public static int CARD_NUM=3;//玩家手牌数
+    public static int PLAYER_NUM=2;
+    public static int CARD_NUM=5;//玩家手牌数
     public ArrayList<Card> cards=new ArrayList<Card>();
-    public HashMap<String,Card> hm=new HashMap<String, Card>();
-
+    //public HashMap<String,Card> hm=new HashMap<String, Card>();
+    public static int CARD_WEIGHT;
     public ArrayList<Player>pl=new ArrayList<Player>();
+    public List<Card> testCars=new ArrayList<Card>();
 
     public static void main(String[] args){
         CardGame that=new CardGame();
@@ -45,16 +47,32 @@ public class CardGame {
         System.out.println("=========创建玩家...===========\n");
 
         that.CreatePlayers();
-
-
-
         // CreatePlayers();
         //发牌(规则：一人一张，顺序发牌)
         that.SendCards(that.pl);
 
+        //判断权值
+        //that.CountWeight();
+
 
         //比较得出获胜玩家
         that.GameResult(that.pl);
+
+        //测试
+
+       /* ArrayList<Card> sz=new ArrayList<Card>();
+        for (int i = 6; i <11 ; i++) {
+            sz.add(that.testCars.get(i));
+        }
+        Collections.sort(sz);
+        for(Card c:sz){
+            System.out.print(c.getNumber()+"|");
+        }
+        if(that.isSZ(sz)){
+            System.out.print("sz是顺子");
+        }else {
+            System.out.print("你的算法错误");
+        }*/
     }
 
     public void CreateCards() {
@@ -123,6 +141,8 @@ public class CardGame {
                 c.setNum(num);
 
                 cards.add(c);
+                //单元测试
+                testCars.add(c);
 
             }
         }
@@ -184,6 +204,8 @@ public class CardGame {
             }
 
             pl.get(n).setCards(pc);
+           // Collections.sort(sz);
+            CountWeight(pl.get(n));//判断权值
             System.out.print("\n");
 
 
@@ -220,12 +242,111 @@ public class CardGame {
 
 
     }
-    // System.out.println("玩家2最大牌为"+Max.get(1));
-       /* if(winCard.equals(Max.get(0))){
-            System.out.println("玩家1获胜");
+
+    public void CountWeight(Player p){
+        //从大到小排序
+
+        ArrayList<Card> handCards=p.getCards();
+        Collections.sort(handCards);
+        //是否顺子
+        System.out.print("\n");
+        System.out.print("是否是顺子:");
+        if(isSZ(handCards)){
+            System.out.println("是顺子");
         }else {
-            System.out.println("玩家2获胜");
-        }*/
+            System.out.println("非顺子");
+        }
+
+        //是否同花
+
+        System.out.print("是否同花:");
+        if(isTH(handCards)){
+            System.out.println("是同花");
+        }else {
+            System.out.println("非同花");
+        }
+
+
+
+
+
+
+    }
+    public boolean isTH(ArrayList<Card> cards){
+        boolean flag=true;
+        Card c0=cards.get(0);
+        for (int i = 0; i <cards.size(); i++) {
+            if(!c0.getFlower().equals(cards.get(i).getFlower())){
+                flag=false;
+            }
+        }
+        return flag;
+
+    }
+    public boolean isSZ(ArrayList<Card> cards){
+        boolean flag=true;
+        Card h=cards.get(0);
+        Card f=cards.get(cards.size()-1);
+        //System.out.println("卡牌数"+cards.size());
+        if(h.getNum()==NumberEnum.N){
+            //全部为数字
+           // System.out.println("全部为数字");
+            for (int i = 0; i < cards.size(); i++) {
+                int ci=Integer.parseInt(cards.get(0).getNumber());
+                int ci_1=Integer.parseInt(cards.get(i).getNumber());
+                if(ci-ci_1!=i){
+                   // System.out.println("比较值" +(ci-ci_1));
+                    flag=false;
+                }
+            }
+        }else if(f.getNum()!=NumberEnum.N){
+            //全部为花牌
+            //System.out.println("全部为花牌");
+            for (int i = 0; i < cards.size(); i++) {
+                NumberEnum c0=cards.get(0).getNum();
+                NumberEnum ci=cards.get(i).getNum();
+                if(c0.compareTo(ci)!=i){
+                    //System.out.println("全部为花牌");
+                   // System.out.println("比较值" + c0.compareTo(ci));
+                    flag=false;
+                }
+
+
+            }
+
+        }else {
+            //数花都有
+           // System.out.println("花数都有");
+            ArrayList<Card> nCards=new ArrayList<Card>();
+            ArrayList<Card> fCards=new ArrayList<Card>();
+            for (int i = 0; i <cards.size() ; i++) {
+                if(cards.get(i).getNum()!=NumberEnum.N){
+                    //花牌
+                    fCards.add(cards.get(i));
+                }else{
+                    //数牌
+                    nCards.add(cards.get(i));
+                }
+            }
+            for (int i = 0; i < fCards.size(); i++) {
+
+                if(((fCards.get(0).getNum().compareTo(fCards.get(i).getNum())))!=i||
+                        fCards.get(fCards.size()-1).getNum()!=NumberEnum.J){
+                    flag=false;
+                }
+            }
+            for (int i = 0; i < nCards.size(); i++) {
+                int c0=Integer.parseInt(nCards.get(0).getNumber());
+                int ci=Integer.parseInt(nCards.get(i).getNumber());
+                //int fNumber=Integer.parseInt(nCards.get(nCards.size()-1).getNumber());
+                if(c0-ci!=i||c0!=10){
+                    flag=false;
+                }
+            }
+
+        }
+        return flag;
+    }
 
 
 
