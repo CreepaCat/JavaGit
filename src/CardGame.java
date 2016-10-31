@@ -4,6 +4,7 @@
  * 锻炼数据结构和排序的运用能力
  * 可判断顺子和同花
  */
+
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.Collections;
@@ -12,8 +13,8 @@ import java.util.ArrayList;
  * Created by ghost on 2016/10/26.
  */
 public class CardGame {
-    public static int PLAYER_NUM=2;
-    public static int CARD_NUM=5;//玩家手牌数
+    public static int PLAYER_NUM=3;
+    public static int CARD_NUM=3;//玩家手牌数
     public ArrayList<Card> cards=new ArrayList<Card>();
     //public HashMap<String,Card> hm=new HashMap<String, Card>();
     public static int CARD_WEIGHT;
@@ -60,18 +61,25 @@ public class CardGame {
 
         //测试
 
-       /* ArrayList<Card> sz=new ArrayList<Card>();
-        for (int i = 6; i <11 ; i++) {
+       /*ArrayList<Card> sz=new ArrayList<Card>();
+        for (int i = 6; i <7 ; i++) {
+            sz.add(that.testCars.get(i));
+            sz.add(that.testCars.get(i));
             sz.add(that.testCars.get(i));
         }
         Collections.sort(sz);
         for(Card c:sz){
             System.out.print(c.getNumber()+"|");
         }
-        if(that.isSZ(sz)){
-            System.out.print("sz是顺子");
-        }else {
-            System.out.print("你的算法错误");
+        System.out.print("是否有对子:");
+        int Weight=that.isRP(sz);
+        switch(Weight){
+            case 0:
+                System.out.println("散牌");break;
+            case 1:
+                System.out.println("对子");break;
+            case 6:
+                System.out.println("豹子");break;
         }*/
     }
 
@@ -248,27 +256,41 @@ public class CardGame {
 
         ArrayList<Card> handCards=p.getCards();
         Collections.sort(handCards);
-        //是否顺子
+        int cardsWeight=0;
         System.out.print("\n");
-        System.out.print("是否是顺子:");
-        if(isSZ(handCards)){
-            System.out.println("是顺子");
-        }else {
-            System.out.println("非顺子");
-        }
-
         //是否同花
 
         System.out.print("是否同花:");
         if(isTH(handCards)){
+            cardsWeight+=3;
             System.out.println("是同花");
         }else {
             System.out.println("非同花");
         }
+        //是否顺子
 
+        System.out.print("是否是顺子:");
+        if(isSZ(handCards)){
+            cardsWeight+=2;
+            System.out.println("是顺子");
+        }else {
+            System.out.println("非顺子");
+            //是否有对子
+            System.out.print("是否有对子:");
+            int Weight=isRP(handCards);
+            switch(Weight){
+                case 0:
+                    System.out.println("散牌");break;
+                case 1:
+                    cardsWeight+=1;
+                    System.out.println("对子");break;
+                case 6:
+                    cardsWeight+=6;
+                    System.out.println("豹子");break;
+        }
 
-
-
+        }
+        p.setWeight(cardsWeight);
 
 
     }
@@ -346,6 +368,72 @@ public class CardGame {
 
         }
         return flag;
+    }
+   public int isRP(ArrayList<Card> cards){
+        //按三张牌计算
+        //boolean flag=true;
+        //int flag=0;
+        int Weight=0;
+        Card h=cards.get(0);
+        Card m=cards.get(1);
+        Card f=cards.get(cards.size()-1);
+        if(f.getNum()!=NumberEnum.N){
+            //全为花牌
+
+                if(h.getNum()!=m.getNum()&&h.getNum()!=f.getNum()&&
+                        m.getNum()!=f.getNum()){
+                    //散牌
+                    Weight=0;
+                }else  if(h.getNum()==m.getNum()&&h.getNum()==f.getNum()&&
+                        m.getNum()==f.getNum()){
+                    //豹子
+                    Weight=6;
+                }else {
+                    //对子
+                    Weight=1;
+            }
+        }else if(h.getNum()==NumberEnum.N){
+            //全为数字
+            int hn=Integer.parseInt(h.getNumber());
+            int mn=Integer.parseInt(m.getNumber());
+            int fn=Integer.parseInt(f.getNumber());
+            if(hn!=mn&&hn!=fn&&
+                    mn!=fn){
+                //散牌
+                Weight=0;
+            }else  if(hn==mn&&hn==fn&&
+                    mn==fn){
+                //豹子
+                Weight=6;
+            }else {
+                //对子
+                Weight=1;
+            }
+
+        }else {
+            //花数都有,显然不可能是豹子
+            if(m.getNum()==NumberEnum.N){
+                //两数一花
+                int fn=Integer.parseInt(f.getNumber());
+                int mn=Integer.parseInt(m.getNumber());
+                if(fn==mn){
+                    //对子
+                    Weight=1;
+                }else {
+                    Weight=0;
+                }
+            }else {
+                //两花一数
+                if(h.getNum()==m.getNum()){
+                    //对子
+                    Weight=1;
+                }else {
+                    Weight=0;
+                }
+            }
+        }
+       return Weight;
+
     }
 
 
@@ -481,6 +569,14 @@ class Card implements Comparable<Card>{
     }
 }
 class Player{
+    public int getWeight() {
+        return weight;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+
     private int weight;
     private int ID;
 
