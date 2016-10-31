@@ -15,6 +15,7 @@ import java.util.ArrayList;
 public class CardGame {
     public static int PLAYER_NUM=3;
     public static int CARD_NUM=3;//玩家手牌数
+    public static int POKER_NUM=1;//2副牌
     public ArrayList<Card> cards=new ArrayList<Card>();
     //public HashMap<String,Card> hm=new HashMap<String, Card>();
     public static int CARD_WEIGHT;
@@ -26,9 +27,11 @@ public class CardGame {
 
         //创建扑克牌(52张，不要大小王)
         System.out.println("========游戏开始，创建扑克牌=========");
-        that.CreateCards();
+
+            that.CreateCards();
         System.out.println("========扑克牌创建成功！=========");
         Card c0;
+        Collections.sort(that.cards,new SortCards());
         for(int k=0;k<that.cards.size();k++){
             c0=that.cards.get(k);
             //System.out.print(c0.getFlo().name()+c0.getNum().name());
@@ -57,7 +60,8 @@ public class CardGame {
 
 
         //比较得出获胜玩家
-        that.GameResult(that.pl);
+       // that.GameResult(that.pl);
+        that.getWinner(that.pl);
 
         //测试
 
@@ -67,7 +71,7 @@ public class CardGame {
             sz.add(that.testCars.get(i));
             sz.add(that.testCars.get(i));
         }
-        Collections.sort(sz);
+        Collections.sort(sz,new SortCard());
         for(Card c:sz){
             System.out.print(c.getNumber()+"|");
         }
@@ -84,74 +88,76 @@ public class CardGame {
     }
 
     public void CreateCards() {
-
-        for (int i = 0; i < 4; i++) {
+        for (int n = 0; n < POKER_NUM; n++) {
             FlowerEnum flower = null;
 
-            NumberEnum num=null;
+            NumberEnum num = null;
 
-            String fc=null;
-            if(i==0){
-                fc="方块";
-                flower=FlowerEnum.FQ;
+            String fc = null;
 
 
+            for (int i = 0; i < 4; i++) {
 
-            }
-            if(i==1){
-                fc="梅花";
-                flower=FlowerEnum.MH;
-            }
-            if(i==2){
-                fc="红桃";
-                flower=FlowerEnum.RE;
-            }
-            if(i==3){
-                fc="黑桃";
-                flower=FlowerEnum.BL;
+                if (i == 0) {
+                    fc = "方块";
+                    flower = FlowerEnum.FQ;
 
-            }
-            for (int j = 0; j < 13; j++) {
-                String number=null;
-                if(j<=8){
-                    //整数解析为字符串
-                    number=String.valueOf(j+2);
-                    num=NumberEnum.N;
-
-
-
-                    // num=Nu
-                    // num=
-                }else if(j==9){
-                    number="J";
-                    num=NumberEnum.J;
 
                 }
-                if(j==10){
-                    number="Q";
-                    num=NumberEnum.Q;
+                if (i == 1) {
+                    fc = "梅花";
+                    flower = FlowerEnum.MH;
                 }
-                if(j==11){
-                    number="K";
-                    num=NumberEnum.K;
+                if (i == 2) {
+                    fc = "红桃";
+                    flower = FlowerEnum.RE;
+                }
+                if (i == 3) {
+                    fc = "黑桃";
+                    flower = FlowerEnum.BL;
 
                 }
-                if(j==12){
-                    number="A";
-                    num=NumberEnum.A;
+                for (int j = 0; j < 13; j++) {
+                    String number = null;
+                    if (j <= 8) {
+                        //整数解析为字符串
+                        number = String.valueOf(j + 2);
+                        num = NumberEnum.N;
+
+
+                        // num=Nu
+                        // num=
+                    } else if (j == 9) {
+                        number = "J";
+                        num = NumberEnum.J;
+
+                    }
+                    if (j == 10) {
+                        number = "Q";
+                        num = NumberEnum.Q;
+                    }
+                    if (j == 11) {
+                        number = "K";
+                        num = NumberEnum.K;
+
+                    }
+                    if (j == 12) {
+                        number = "A";
+                        num = NumberEnum.A;
+
+                    }
+                    Card c = new Card();
+                    c.setFlower(fc);
+                    c.setNumber(number);
+
+                    c.setFlo(flower);
+                    c.setNum(num);
+
+                    cards.add(c);
+                    //单元测试
+                    //'testCars.add(c);
 
                 }
-                Card c=new Card();
-                c.setFlower(fc);
-                c.setNumber(number);
-
-                c.setFlo(flower);
-                c.setNum(num);
-
-                cards.add(c);
-                //单元测试
-                testCars.add(c);
-
             }
         }
     }
@@ -255,42 +261,61 @@ public class CardGame {
         //从大到小排序
 
         ArrayList<Card> handCards=p.getCards();
-        Collections.sort(handCards);
+        Collections.sort(handCards,new SortCards());
         int cardsWeight=0;
-        System.out.print("\n");
+        //System.out.print("\n");
         //是否同花
 
-        System.out.print("是否同花:");
+       // System.out.print("是否同花:");
         if(isTH(handCards)){
             cardsWeight+=3;
-            System.out.println("是同花");
+           // System.out.println("是同花");
         }else {
-            System.out.println("非同花");
+           // System.out.println("非同花");
         }
         //是否顺子
 
-        System.out.print("是否是顺子:");
+       //System.out.print("是否是顺子:");
         if(isSZ(handCards)){
             cardsWeight+=2;
-            System.out.println("是顺子");
+           // System.out.println("是顺子");
         }else {
-            System.out.println("非顺子");
+           // System.out.println("非顺子");
             //是否有对子
-            System.out.print("是否有对子:");
+           // System.out.print("是否有对子:");
             int Weight=isRP(handCards);
             switch(Weight){
                 case 0:
-                    System.out.println("散牌");break;
+                    break;
                 case 1:
                     cardsWeight+=1;
-                    System.out.println("对子");break;
+                    break;
                 case 6:
                     cardsWeight+=6;
-                    System.out.println("豹子");break;
+                    break;
         }
 
         }
         p.setWeight(cardsWeight);
+
+
+    }
+    public void getWinner( ArrayList<Player> pl){
+        for (int i = 0; i <pl.size() ; i++) {
+            CountWeight(pl.get(i));
+        }
+        Collections.sort(pl,new SortPlayer());
+        Player winner=pl.get(0);
+
+        System.out.println("玩家" + winner.getName() + "获胜,其手牌为：");
+
+       // Collections.sort( winner.getCards(),new SortCards());
+        for (int i = 0; i <  winner.getCards().size(); i++) {
+            System.out.print("[" + winner.getCards().get(i).getFlower() +
+                    winner.getCards().get(i).getNumber() + "]");
+        }
+        System.out.println("\n");
+
 
 
     }
@@ -497,6 +522,49 @@ public class CardGame {
         return flag;
 
     }
+    public int NumCompare(Card a,Card b){
+        NumberEnum an=a.getNum();
+        NumberEnum bn=b.getNum();
+        int result=0;
+        if(an.compareTo(bn)>0){
+            //an>bn
+            return result=1;
+        }else if(an.compareTo(bn)<0){
+            //an<bn
+            return result=-1;
+        }else {
+            //枚举相等
+            if(an==NumberEnum.N){
+                int anum=Integer.parseInt(a.getNumber());
+                int bnum=Integer.parseInt(b.getNumber());
+                if(anum>bnum){
+                    //a>b
+                    return result=1;
+                }else if(anum<bnum){
+                    //a<b
+                    return result=-1;
+                }else {
+                    //a=b
+                    return result=0;
+                }
+            }else {
+                //a=b
+                return result=0;
+            }
+        }
+    }
+    public int FloCompare(Card a,Card b){
+        FlowerEnum af=a.getFlo();
+        FlowerEnum bf=b.getFlo();
+        int result=0;
+        if(af.compareTo(bf)>0){
+            return result=1;
+        }else if(af.compareTo(bf)<0){
+            return result=-1;
+        }else {
+            return result=0;
+        }
+    }
 
 
 
@@ -568,7 +636,7 @@ class Card implements Comparable<Card>{
             return 1;
     }
 }
-class Player{
+class Player implements Comparable<Player> {
     public int getWeight() {
         return weight;
     }
@@ -608,7 +676,71 @@ class Player{
 
     private ArrayList<Card> cards;
 
-}
+    @Override
+    public int compareTo(Player o) {
+        if (this.getWeight() > o.getWeight()) {
+            return -1;
+        } else if (this.getWeight() < o.getWeight()) {
+                return 1;
+            } else {
+                CardGame cg = new CardGame();
+                //权值相同
+                ArrayList this_cards = this.getCards();
+                ArrayList o_cards = o.getCards();
+                Card th = (Card) this_cards.get(0);
+                Card tm = (Card) this_cards.get(1);
+                Card tf = (Card) this_cards.get(2);
+
+                Card oh = (Card) o_cards.get(0);
+                Card om = (Card) o_cards.get(1);
+                Card of = (Card) o_cards.get(2);
+                switch (this.getWeight()) {
+                    case 0://散牌
+                        switch (cg.NumCompare(th, oh)) {
+                            case -1://小于
+                                return 1;
+                           // break;
+                            case 1://大于
+                                return -1;
+                            //break;
+                            case 0://第一张num相等
+                                switch (cg.NumCompare(tm, om)) {
+                                    case -1://小于
+                                        return 1;
+                                    //break;
+                                    case 1://大于
+                                        return -1;
+                                  //  break;
+                                    case 0://第二张num相等
+                                        switch (cg.NumCompare(tm, om)) {
+                                            case -1://小于
+                                                return 1;
+                                           // break;
+                                            case 1://大于
+                                                return -1;
+                                          //  break;
+                                            case 0:
+                                                //平局
+                                                return 0;
+                                           // break;
+                                        }
+                                }
+
+                        }
+
+                    default://都为顺子，对子，或同花如何比较
+                        return 0;
+                  //  break;
+
+                }
+
+            }
+        }
+
+    }
+
+
+
 class SortCards implements Comparator{
 
     @Override
@@ -617,5 +749,13 @@ class SortCards implements Comparator{
         Card c1=(Card)o1;
         Card c2=(Card)o2;
         return c1.compareTo(c2);
+    }
+}
+class SortPlayer implements Comparator{
+    @Override
+    public int compare(Object o1, Object o2){
+        Player p1=(Player)o1;
+        Player p2=(Player)o2;
+        return p1.compareTo(p2);
     }
 }
