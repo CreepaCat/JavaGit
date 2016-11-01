@@ -1,5 +1,7 @@
 
 
+import javafx.beans.binding.StringBinding;
+
 import java.util.ArrayList;
 
 public class Player implements Comparable<Player> {
@@ -41,6 +43,20 @@ public class Player implements Comparable<Player> {
     }
 
     private ArrayList<Card> cards;
+
+    public String cardsToString(){
+
+        String str="";
+        for (int i = 0; i <this.getCards().size() ; i++) {
+            str=str+this.getCards().get(i).toString();
+
+        }
+        return str;
+    }
+    @Override
+    public String toString(){
+        return "玩家,ID："+this.getID()+"名字："+this.getName();
+    }
 
     @Override
     public int compareTo(Player o) {

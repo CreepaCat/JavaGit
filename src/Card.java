@@ -47,6 +47,10 @@ public class Card implements Comparable<Card>{
     }
 
     private String number;
+    @Override
+    public String toString(){
+       return "["+this.getFlower()+this.getNumber()+"]";
+    }
 
     @Override
     public int compareTo(Card o) {

@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * Created by ghost on 2016/10/26.
  */
 public class CardGame {
-    public static int PLAYER_NUM=3;
+    public static int PLAYER_NUM=4;
     public static int CARD_NUM=3;//玩家手牌数
     public static int POKER_NUM=1;//1副牌
     public ArrayList<Card> cards=new ArrayList<Card>();
@@ -61,9 +61,51 @@ public class CardGame {
 
         //比较得出获胜玩家
        // that.GameResult(that.pl);
-        that.getWinner(that.pl);
+        Player winner=that.getWinner(that.pl);
+        //ArrayList<Card> winCards=winner.getCards();
+        int ww=winner.getWeight();
+        System.out.println(winner.toString() + "获胜,其手牌为：");
+        if(ww!=0&&ww!=5&&ww!=10&&ww!=25) {
+            System.out.print("同花");
+
+            switch (winner.getWeight()) {
+                case 0:
+                    System.out.print("散牌");
+                    break;
+                case 5:
+                    System.out.print("对子");
+                    break;
+                case 10:
+                    System.out.print("顺子");
+                    break;
+                case 25:
+                    System.out.print("豹子");
+                    break;
+
+            }
+        }else {
+            switch (winner.getWeight()) {
+                case 0:
+                    System.out.print("散牌");
+                    break;
+                case 5:
+                    System.out.print("对子");
+                    break;
+                case 10:
+                    System.out.print("顺子");
+                    break;
+                case 25:
+                    System.out.print("豹子");
+                    break;
+            }
+        }
+
+            System.out.println(winner.cardsToString());
+
+        //System.out.print("\n");
 
         //测试
+        /*
 
        ArrayList<Card> sz=new ArrayList<Card>();
         ArrayList<Card> _sz=new ArrayList<Card>();
@@ -104,7 +146,7 @@ public class CardGame {
         System.out.println("_tp权值：" + _tp.getWeight());
         Collections.sort(test,new SortPlayer());
         Player winner=test.get(0);
-        System.out.println("winner is"+winner.getCards().get(2).getFlower()+winner.getCards().get(2).getNumber());
+        System.out.println("winner is"+winner.getCards().get(2).getFlower()+winner.getCards().get(2).getNumber());*/
 
     }
 
@@ -331,23 +373,12 @@ public class CardGame {
 
 
     }
-    public void getWinner( ArrayList<Player> pl){
+    public Player getWinner( ArrayList<Player> pl){
         for (int i = 0; i <pl.size() ; i++) {
-            CountWeight(pl.get(i));
+            CountWeight(pl.get(i));//计算权值
         }
         Collections.sort(pl,new SortPlayer());
-        Player winner=pl.get(0);
-
-        System.out.println("玩家" + winner.getName() + "获胜,其手牌为：");
-
-       // Collections.sort( winner.getCards(),new SortCards());
-        for (int i = 0; i <  winner.getCards().size(); i++) {
-            System.out.print("[" + winner.getCards().get(i).getFlower() +
-                    winner.getCards().get(i).getNumber() + "]");
-        }
-        System.out.println("\n");
-
-
+        return pl.get(0);
 
     }
     public boolean isTH(ArrayList<Card> cards){
