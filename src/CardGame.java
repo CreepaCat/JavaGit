@@ -5,7 +5,7 @@
  * 可判断顺子和同花
  */
 
-import java.lang.reflect.Array;
+//import java.lang.reflect.Array;
 import java.util.*;
 import java.util.Collections;
 import java.util.ArrayList;
@@ -15,10 +15,10 @@ import java.util.ArrayList;
 public class CardGame {
     public static int PLAYER_NUM=3;
     public static int CARD_NUM=3;//玩家手牌数
-    public static int POKER_NUM=1;//2副牌
+    public static int POKER_NUM=1;//1副牌
     public ArrayList<Card> cards=new ArrayList<Card>();
     //public HashMap<String,Card> hm=new HashMap<String, Card>();
-    public static int CARD_WEIGHT;
+    //public static int CARD_WEIGHT;
     public ArrayList<Player>pl=new ArrayList<Player>();
     public List<Card> testCars=new ArrayList<Card>();
 
@@ -31,7 +31,7 @@ public class CardGame {
             that.CreateCards();
         System.out.println("========扑克牌创建成功！=========");
         Card c0;
-        Collections.sort(that.cards,new SortCards());
+       // Collections.sort(that.cards,new SortCards());
         for(int k=0;k<that.cards.size();k++){
             c0=that.cards.get(k);
             //System.out.print(c0.getFlo().name()+c0.getNum().name());
@@ -65,26 +65,47 @@ public class CardGame {
 
         //测试
 
-       /*ArrayList<Card> sz=new ArrayList<Card>();
-        for (int i = 6; i <7 ; i++) {
+       ArrayList<Card> sz=new ArrayList<Card>();
+        ArrayList<Card> _sz=new ArrayList<Card>();
+        for (int i = 12; i <13 ; i++) {
             sz.add(that.testCars.get(i));
             sz.add(that.testCars.get(i));
-            sz.add(that.testCars.get(i));
+            sz.add(that.testCars.get(i+1));
         }
-        Collections.sort(sz,new SortCard());
+        for (int i = 12; i <13 ; i++) {
+            _sz.add(that.testCars.get(i));
+            _sz.add(that.testCars.get(i));
+            _sz.add(that.testCars.get(i+2));
+        }
+        Collections.sort(sz,new SortCards());
+        Collections.sort(_sz,new SortCards());
+        System.out.print("tp牌为：");
         for(Card c:sz){
-            System.out.print(c.getNumber()+"|");
+            System.out.print(c.getFlower()+c.getNumber()+"|");
         }
-        System.out.print("是否有对子:");
-        int Weight=that.isRP(sz);
-        switch(Weight){
-            case 0:
-                System.out.println("散牌");break;
-            case 1:
-                System.out.println("对子");break;
-            case 6:
-                System.out.println("豹子");break;
-        }*/
+        System.out.println("\n");
+        System.out.print("_tp牌为:");
+        for(Card c:_sz){
+            System.out.print(c.getFlower()+c.getNumber()+"|");
+        }
+        System.out.println("\n");
+       // System.out.print("是否有对子:");
+        System.out.println("计算权值:");
+        Player tp=new Player();
+        Player _tp=new Player();
+        ArrayList<Player> test=new ArrayList<Player>();
+        test.add(tp);
+        test.add(_tp);
+        tp.setCards(sz);
+        _tp.setCards(_sz);
+        that.CountWeight(tp);
+        that.CountWeight(_tp);
+        System.out.println("tp权值：" + tp.getWeight());
+        System.out.println("_tp权值：" + _tp.getWeight());
+        Collections.sort(test,new SortPlayer());
+        Player winner=test.get(0);
+        System.out.println("winner is"+winner.getCards().get(2).getFlower()+winner.getCards().get(2).getNumber());
+
     }
 
     public void CreateCards() {
@@ -155,7 +176,7 @@ public class CardGame {
 
                     cards.add(c);
                     //单元测试
-                    //'testCars.add(c);
+                    testCars.add(c);
 
                 }
             }
@@ -268,7 +289,17 @@ public class CardGame {
 
        // System.out.print("是否同花:");
         if(isTH(handCards)){
-            cardsWeight+=3;
+            switch(handCards.get(0).getFlo()){
+                case FQ:
+                    cardsWeight+=11;break;
+                case MH:
+                    cardsWeight+=12;break;
+                case RE:
+                    cardsWeight+=13;break;
+                case BL:
+                    cardsWeight+=14;break;
+            }
+            //cardsWeight+=3;
            // System.out.println("是同花");
         }else {
            // System.out.println("非同花");
@@ -277,7 +308,7 @@ public class CardGame {
 
        //System.out.print("是否是顺子:");
         if(isSZ(handCards)){
-            cardsWeight+=2;
+            cardsWeight+=10;
            // System.out.println("是顺子");
         }else {
            // System.out.println("非顺子");
@@ -285,13 +316,13 @@ public class CardGame {
            // System.out.print("是否有对子:");
             int Weight=isRP(handCards);
             switch(Weight){
-                case 0:
+                case 0://散牌
                     break;
-                case 1:
-                    cardsWeight+=1;
+                case 1://对子
+                    cardsWeight+=5;
                     break;
-                case 6:
-                    cardsWeight+=6;
+                case 6://豹子
+                    cardsWeight+=25;
                     break;
         }
 
@@ -583,6 +614,7 @@ enum NumberEnum{
     N,J,Q,K,A
 
 }
+/*
 class Card implements Comparable<Card>{
     public String getFlower() {
         return flower;
@@ -738,7 +770,7 @@ class Player implements Comparable<Player> {
         }
 
     }
-
+*/
 
 
 class SortCards implements Comparator{
